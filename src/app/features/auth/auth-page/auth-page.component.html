@@ -1,0 +1,622 @@
+<div class="h-screen bg-white overflow-hidden">
+  <!-- Container principal plein écran -->
+  <div class="relative w-full h-full overflow-hidden">
+    
+    <!-- Panel Login -->
+    <div 
+      class="absolute inset-0 w-full lg:w-1/2 bg-white transition-all duration-700 ease-in-out z-20"
+      [class.translate-x-0]="activeMode === 'login'"
+      [class.-translate-x-full]="activeMode === 'register'"
+    >
+      <div class="h-full flex flex-col justify-center px-8 py-6 lg:px-20 xl:px-28">
+        <!-- En-tête -->
+        <div class="mb-5">
+          <h2 class="text-2xl font-bold text-gray-900 mb-1">Bienvenue 👋</h2>
+          <p class="text-sm text-gray-600">Connectez-vous pour accéder à votre espace</p>
+        </div>
+
+        <!-- Message d'erreur -->
+        @if (loginError) {
+          <div class="mb-3 bg-red-50 border-l-4 border-red-500 text-red-700 px-3 py-2 rounded-lg">
+            <span class="text-xs">{{ loginError }}</span>
+          </div>
+        }
+
+        <!-- Formulaire Login -->
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-3">
+          <div>
+            <label for="login-username" class="block text-xs font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <input
+                type="email"
+                id="login-username"
+                formControlName="username"
+                class="w-full pl-10 pr-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                [class.border-red-500]="hasError(loginForm, 'username', 'required') || hasError(loginForm, 'username', 'minlength')"
+                placeholder="admin@clinique.com"
+              />
+            </div>
+            @if (hasError(loginForm, 'username', 'required')) {
+              <p class="error-message mt-0.5 text-xs">L'email est requis</p>
+            }
+          </div>
+
+          <div>
+            <label for="login-password" class="block text-xs font-medium text-gray-700 mb-1">
+              Mot de passe
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <input
+                [type]="showLoginPassword ? 'text' : 'password'"
+                id="login-password"
+                formControlName="password"
+                class="w-full pl-10 pr-10 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                [class.border-red-500]="hasError(loginForm, 'password', 'required') || hasError(loginForm, 'password', 'minlength')"
+                placeholder="••••••••••"
+              />
+              <button
+                type="button"
+                (click)="toggleLoginPasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                @if (showLoginPassword) {
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                  </svg>
+                } @else {
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                }
+              </button>
+            </div>
+            @if (hasError(loginForm, 'password', 'required')) {
+              <p class="error-message mt-0.5 text-xs">Le mot de passe est requis</p>
+            }
+          </div>
+
+          <!-- Se souvenir / Mot de passe oublié -->
+          <div class="flex items-center justify-between text-xs">
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" class="w-3.5 h-3.5 text-green-600 border-gray-300 rounded focus:ring-green-500">
+              <span class="ml-1.5 text-gray-600">Se souvenir de moi</span>
+            </label>
+            <a href="#" class="text-green-600 hover:text-green-700 font-medium">Mot de passe oublié ?</a>
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="loginForm.invalid || loginLoading"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 text-sm rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-600/30 hover:shadow-xl hover:shadow-green-600/40"
+          >
+            @if (loginLoading) {
+              <span class="flex items-center justify-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Connexion...
+              </span>
+            } @else {
+              Se connecter
+            }
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="relative my-4">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-200"></div>
+          </div>
+          <div class="relative flex justify-center text-xs">
+            <span class="px-3 bg-white text-gray-500">Ou continuer avec</span>
+          </div>
+        </div>
+
+        <!-- Social Login -->
+        <div class="grid grid-cols-2 gap-2.5">
+          <button type="button" class="flex items-center justify-center px-3 py-2 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <svg class="w-4 h-4 mr-1.5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span class="font-medium text-gray-700">Google</span>
+          </button>
+          <button type="button" class="flex items-center justify-center px-3 py-2 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <svg class="w-4 h-4 mr-1.5" fill="#1877F2" viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+            <span class="font-medium text-gray-700">Facebook</span>
+          </button>
+        </div>
+
+        <!-- Lien vers register -->
+        <div class="mt-4 text-center">
+          <p class="text-xs text-gray-600">
+            Pas encore de compte ?
+            <button type="button" (click)="toggleMode('register')" class="text-green-600 hover:text-green-700 font-semibold ml-1">
+              Créer un compte
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Register -->
+    <div 
+      class="absolute inset-0 w-full lg:w-1/2 lg:left-1/2 bg-white transition-all duration-700 ease-in-out z-20"
+      [class.translate-x-0]="activeMode === 'register'"
+      [class.translate-x-full]="activeMode === 'login'"
+    >
+      <div class="h-full flex flex-col justify-center px-8 py-6 lg:px-20 xl:px-28">
+        <!-- En-tête -->
+        <div class="mb-4">
+          <h2 class="text-2xl font-bold text-gray-900 mb-1">Créer un compte</h2>
+          <p class="text-sm text-gray-600">Étape {{ registerStep }} sur {{ totalSteps }}</p>
+        </div>
+
+        <!-- Indicateur de progression amélioré -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between">
+            <!-- Step 1 -->
+            <div class="flex flex-col items-center flex-1">
+              <div class="relative">
+                <div 
+                  class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 shadow-md"
+                  [class.bg-gradient-to-br]="registerStep >= 1"
+                  [class.from-green-500]="registerStep >= 1"
+                  [class.to-green-600]="registerStep >= 1"
+                  [class.text-white]="registerStep >= 1"
+                  [class.bg-gray-200]="registerStep < 1"
+                  [class.text-gray-400]="registerStep < 1"
+                  [class.scale-110]="registerStep === 1"
+                >
+                  @if (registerStep > 1) {
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  } @else {
+                    1
+                  }
+                </div>
+                @if (registerStep === 1) {
+                  <div class="absolute -inset-1 bg-green-400 rounded-full animate-ping opacity-20"></div>
+                }
+              </div>
+              <span class="text-xs font-medium mt-2 transition-colors" [class.text-green-600]="registerStep >= 1" [class.text-gray-500]="registerStep < 1">
+                Rôle
+              </span>
+            </div>
+
+            <!-- Ligne de connexion 1-2 -->
+            <div class="flex-1 h-1 mx-2 rounded-full transition-all duration-300 relative overflow-hidden" [class.bg-gray-200]="registerStep < 2">
+              <div 
+                class="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600 transition-all duration-500"
+                [class.w-full]="registerStep >= 2"
+                [class.w-0]="registerStep < 2"
+              ></div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="flex flex-col items-center flex-1">
+              <div class="relative">
+                <div 
+                  class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 shadow-md"
+                  [class.bg-gradient-to-br]="registerStep >= 2"
+                  [class.from-green-500]="registerStep >= 2"
+                  [class.to-green-600]="registerStep >= 2"
+                  [class.text-white]="registerStep >= 2"
+                  [class.bg-gray-200]="registerStep < 2"
+                  [class.text-gray-400]="registerStep < 2"
+                  [class.scale-110]="registerStep === 2"
+                >
+                  @if (registerStep > 2) {
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  } @else {
+                    2
+                  }
+                </div>
+                @if (registerStep === 2) {
+                  <div class="absolute -inset-1 bg-green-400 rounded-full animate-ping opacity-20"></div>
+                }
+              </div>
+              <span class="text-xs font-medium mt-2 transition-colors" [class.text-green-600]="registerStep >= 2" [class.text-gray-500]="registerStep < 2">
+                Infos
+              </span>
+            </div>
+
+            <!-- Ligne de connexion 2-3 -->
+            <div class="flex-1 h-1 mx-2 rounded-full transition-all duration-300 relative overflow-hidden" [class.bg-gray-200]="registerStep < 3">
+              <div 
+                class="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600 transition-all duration-500"
+                [class.w-full]="registerStep >= 3"
+                [class.w-0]="registerStep < 3"
+              ></div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="flex flex-col items-center flex-1">
+              <div class="relative">
+                <div 
+                  class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 shadow-md"
+                  [class.bg-gradient-to-br]="registerStep >= 3"
+                  [class.from-green-500]="registerStep >= 3"
+                  [class.to-green-600]="registerStep >= 3"
+                  [class.text-white]="registerStep >= 3"
+                  [class.bg-gray-200]="registerStep < 3"
+                  [class.text-gray-400]="registerStep < 3"
+                  [class.scale-110]="registerStep === 3"
+                >
+                  3
+                </div>
+                @if (registerStep === 3) {
+                  <div class="absolute -inset-1 bg-green-400 rounded-full animate-ping opacity-20"></div>
+                }
+              </div>
+              <span class="text-xs font-medium mt-2 transition-colors" [class.text-green-600]="registerStep >= 3" [class.text-gray-500]="registerStep < 3">
+                Sécurité
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message d'erreur -->
+        @if (registerError) {
+          <div class="mb-3 bg-red-50 border-l-4 border-red-500 text-red-700 px-3 py-2 rounded-lg">
+            <span class="text-xs">{{ registerError }}</span>
+          </div>
+        }
+
+        <!-- Formulaire Register -->
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="space-y-4">
+          
+          <!-- Étape 1: Choix du rôle -->
+          @if (registerStep === 1) {
+            <div class="space-y-3 step-content">
+              <label class="block text-sm font-medium text-gray-700 mb-3">
+                Choisissez votre rôle
+              </label>
+              
+              <div class="space-y-2">
+                <label 
+                  class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-green-500"
+                  [class.border-green-600]="registerForm.get('role')?.value === 'USER'"
+                  [class.bg-green-50]="registerForm.get('role')?.value === 'USER'"
+                >
+                  <input 
+                    type="radio" 
+                    formControlName="role" 
+                    value="USER"
+                    class="w-4 h-4 text-green-600 focus:ring-green-500"
+                  />
+                  <div class="ml-3">
+                    <div class="text-sm font-semibold text-gray-900">Utilisateur</div>
+                    <div class="text-xs text-gray-500">Accès standard à la plateforme</div>
+                  </div>
+                </label>
+
+                <label 
+                  class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-green-500"
+                  [class.border-green-600]="registerForm.get('role')?.value === 'MEDECIN'"
+                  [class.bg-green-50]="registerForm.get('role')?.value === 'MEDECIN'"
+                >
+                  <input 
+                    type="radio" 
+                    formControlName="role" 
+                    value="MEDECIN"
+                    class="w-4 h-4 text-green-600 focus:ring-green-500"
+                  />
+                  <div class="ml-3">
+                    <div class="text-sm font-semibold text-gray-900">Médecin</div>
+                    <div class="text-xs text-gray-500">Gestion des patients et consultations</div>
+                  </div>
+                </label>
+
+                <label 
+                  class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-green-500"
+                  [class.border-green-600]="registerForm.get('role')?.value === 'ADMIN'"
+                  [class.bg-green-50]="registerForm.get('role')?.value === 'ADMIN'"
+                >
+                  <input 
+                    type="radio" 
+                    formControlName="role" 
+                    value="ADMIN"
+                    class="w-4 h-4 text-green-600 focus:ring-green-500"
+                  />
+                  <div class="ml-3">
+                    <div class="text-sm font-semibold text-gray-900">Administrateur</div>
+                    <div class="text-xs text-gray-500">Accès complet et gestion du système</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          }
+
+          <!-- Étape 2: Informations personnelles -->
+          @if (registerStep === 2) {
+            <div class="space-y-3 step-content">
+              <div>
+                <label for="register-username" class="block text-xs font-medium text-gray-700 mb-1">
+                  Nom d'utilisateur
+                </label>
+                <input
+                  type="text"
+                  id="register-username"
+                  formControlName="username"
+                  class="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  [class.border-red-500]="hasError(registerForm, 'username', 'required') || hasError(registerForm, 'username', 'minlength')"
+                  placeholder="Choisissez un nom d'utilisateur"
+                />
+                @if (hasError(registerForm, 'username', 'required')) {
+                  <p class="error-message mt-0.5 text-xs">Requis</p>
+                }
+                @if (hasError(registerForm, 'username', 'minlength')) {
+                  <p class="error-message mt-0.5 text-xs">Minimum 3 caractères</p>
+                }
+              </div>
+
+              <div>
+                <label for="register-email" class="block text-xs font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="register-email"
+                  formControlName="email"
+                  class="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  [class.border-red-500]="hasError(registerForm, 'email', 'email')"
+                  placeholder="votre@email.com"
+                />
+                @if (hasError(registerForm, 'email', 'email')) {
+                  <p class="error-message mt-0.5 text-xs">Email invalide</p>
+                }
+              </div>
+
+              <div>
+                <label for="register-phone" class="block text-xs font-medium text-gray-700 mb-1">
+                  Téléphone
+                </label>
+                <input
+                  type="tel"
+                  id="register-phone"
+                  formControlName="phone"
+                  class="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  [class.border-red-500]="hasError(registerForm, 'phone', 'pattern')"
+                  placeholder="771234567"
+                />
+                @if (hasError(registerForm, 'phone', 'required')) {
+                  <p class="error-message mt-0.5 text-xs">Requis</p>
+                }
+                @if (hasError(registerForm, 'phone', 'pattern')) {
+                  <p class="error-message mt-0.5 text-xs">Format invalide (9-15 chiffres)</p>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Étape 3: Mot de passe -->
+          @if (registerStep === 3) {
+            <div class="space-y-3 step-content">
+              <div>
+                <label for="register-password" class="block text-xs font-medium text-gray-700 mb-1">
+                  Mot de passe
+                </label>
+                <div class="relative">
+                  <input
+                    [type]="showRegisterPassword ? 'text' : 'password'"
+                    id="register-password"
+                    formControlName="password"
+                    class="w-full px-3 pr-10 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                    [class.border-red-500]="hasError(registerForm, 'password', 'minlength')"
+                    placeholder="Minimum 6 caractères"
+                  />
+                  <button
+                    type="button"
+                    (click)="toggleRegisterPasswordVisibility()"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    @if (showRegisterPassword) {
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      </svg>
+                    } @else {
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    }
+                  </button>
+                </div>
+                @if (hasError(registerForm, 'password', 'minlength')) {
+                  <p class="error-message mt-0.5 text-xs">Min. 6 caractères</p>
+                }
+              </div>
+
+              <div>
+                <label for="register-confirm-password" class="block text-xs font-medium text-gray-700 mb-1">
+                  Confirmer le mot de passe
+                </label>
+                <div class="relative">
+                  <input
+                    [type]="showConfirmPassword ? 'text' : 'password'"
+                    id="register-confirm-password"
+                    formControlName="confirmPassword"
+                    class="w-full px-3 pr-10 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                    [class.border-red-500]="registerForm.get('confirmPassword')?.value && registerForm.get('password')?.value !== registerForm.get('confirmPassword')?.value"
+                    placeholder="Confirmez votre mot de passe"
+                  />
+                  <button
+                    type="button"
+                    (click)="toggleConfirmPasswordVisibility()"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    @if (showConfirmPassword) {
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      </svg>
+                    } @else {
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    }
+                  </button>
+                </div>
+                @if (registerForm.get('confirmPassword')?.value && registerForm.get('password')?.value !== registerForm.get('confirmPassword')?.value) {
+                  <p class="error-message mt-0.5 text-xs">Les mots de passe ne correspondent pas</p>
+                }
+              </div>
+
+              <!-- Récapitulatif -->
+              <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs font-medium text-gray-700 mb-2">Récapitulatif :</p>
+                <div class="space-y-1 text-xs text-gray-600">
+                  <p><span class="font-medium">Rôle:</span> {{ registerForm.get('role')?.value === 'USER' ? 'Utilisateur' : registerForm.get('role')?.value === 'MEDECIN' ? 'Médecin' : 'Administrateur' }}</p>
+                  <p><span class="font-medium">Nom d'utilisateur:</span> {{ registerForm.get('username')?.value }}</p>
+                  <p><span class="font-medium">Email:</span> {{ registerForm.get('email')?.value }}</p>
+                  <p><span class="font-medium">Téléphone:</span> {{ registerForm.get('phone')?.value }}</p>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Boutons de navigation -->
+          <div class="flex gap-2 pt-2">
+            @if (registerStep > 1) {
+              <button
+                type="button"
+                (click)="previousStep()"
+                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2.5 text-sm rounded-lg transition-all"
+              >
+                Retour
+              </button>
+            }
+            
+            <button
+              type="submit"
+              [disabled]="!isCurrentStepValid() || (registerStep === totalSteps && registerLoading)"
+              class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 text-sm rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-600/30 hover:shadow-xl hover:shadow-green-600/40"
+            >
+              @if (registerLoading && registerStep === totalSteps) {
+                <span class="flex items-center justify-center">
+                  <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Inscription...
+                </span>
+              } @else {
+                {{ registerStep === totalSteps ? 'Créer mon compte' : 'Continuer' }}
+              }
+            </button>
+          </div>
+        </form>
+
+        <!-- Lien vers login -->
+        <div class="mt-4 text-center">
+          <p class="text-xs text-gray-600">
+            Déjà un compte ?
+            <button type="button" (click)="toggleMode('login')" class="text-green-600 hover:text-green-700 font-semibold ml-1">
+              Se connecter
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section droite avec image et overlay (Desktop uniquement) -->
+    <div 
+      class="hidden lg:block absolute inset-y-0 w-1/2 transition-all duration-700 ease-in-out z-10"
+      [class.left-0]="activeMode === 'register'"
+      [class.right-0]="activeMode === 'login'"
+    >
+      <!-- Image de fond -->
+      <div class="absolute inset-0">
+        @if (activeMode === 'login') {
+          <img 
+            src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=1200&h=1200&fit=crop" 
+            alt="Medical professionals"
+            class="w-full h-full object-cover"
+          />
+        } @else {
+          <img 
+            src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1200&h=1200&fit=crop" 
+            alt="Healthcare team"
+            class="w-full h-full object-cover"
+          />
+        }
+        <!-- Overlay gradient vert avec moins d'opacité pour voir l'image -->
+        <div class="absolute inset-0 bg-gradient-to-br from-green-900/75 via-green-800/75 to-green-700/75"></div>
+      </div>
+
+      <!-- Contenu de l'overlay -->
+      <div class="relative h-full flex flex-col justify-center text-white px-12 xl:px-20 py-12 z-10">
+        <div class="max-w-xl animate-fade-in">
+          <!-- Logo/Titre -->
+          <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-3">
+              Clinique<span class="text-green-300">Pro</span>
+            </h1>
+            <h2 class="text-2xl font-semibold mb-3">
+              Simplifiez votre gestion médicale
+            </h2>
+            <p class="text-base text-white/90 leading-relaxed">
+              Rejoignez plus de 2 000 professionnels qui font confiance à CliniquePro pour gérer leurs patients et rendez-vous au quotidien.
+            </p>
+          </div>
+
+          <!-- Statistiques -->
+          <div class="grid grid-cols-3 gap-6 mb-8">
+            <div class="text-center">
+              <div class="text-3xl font-bold mb-1">5K+</div>
+              <div class="text-xs text-white/80">Patients</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold mb-1">98%</div>
+              <div class="text-xs text-white/80">Satisfaction</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold mb-1">24/7</div>
+              <div class="text-xs text-white/80">Support</div>
+            </div>
+          </div>
+
+          <!-- Témoignage -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
+            <p class="text-white/95 mb-3 italic text-sm leading-relaxed">
+              "CliniquePro nous accompagne pour gérer nos patients plus facilement, plus rapidement et en toute confiance."
+            </p>
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <div class="font-semibold text-sm">Dr. Ousmane CAMARA</div>
+                <div class="text-xs text-white/70">Directeur Médical</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

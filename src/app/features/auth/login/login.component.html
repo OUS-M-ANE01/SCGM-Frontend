@@ -1,0 +1,104 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-500 to-primary-700 px-4">
+  <div class="max-w-md w-full">
+    <!-- Card -->
+    <div class="bg-white rounded-2xl shadow-2xl p-8">
+      <!-- Logo et titre -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
+          <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900">Connexion</h2>
+        <p class="text-gray-600 mt-2">Système de Gestion de Clinique</p>
+      </div>
+
+      <!-- Message d'erreur -->
+      @if (errorMessage) {
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+            <span>{{ errorMessage }}</span>
+          </div>
+        </div>
+      }
+
+      <!-- Formulaire -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Username -->
+        <div class="mb-6">
+          <label for="username" class="label">Nom d'utilisateur</label>
+          <input
+            type="text"
+            id="username"
+            formControlName="username"
+            class="input"
+            [class.input-error]="hasError('username', 'required') || hasError('username', 'minlength')"
+            placeholder="Entrez votre nom d'utilisateur"
+          />
+          @if (hasError('username', 'required')) {
+            <p class="error-message">Le nom d'utilisateur est requis</p>
+          }
+          @if (hasError('username', 'minlength')) {
+            <p class="error-message">Minimum 3 caractères</p>
+          }
+        </div>
+
+        <!-- Password -->
+        <div class="mb-6">
+          <label for="password" class="label">Mot de passe</label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="input"
+            [class.input-error]="hasError('password', 'required') || hasError('password', 'minlength')"
+            placeholder="Entrez votre mot de passe"
+          />
+          @if (hasError('password', 'required')) {
+            <p class="error-message">Le mot de passe est requis</p>
+          }
+          @if (hasError('password', 'minlength')) {
+            <p class="error-message">Minimum 6 caractères</p>
+          }
+        </div>
+
+        <!-- Bouton de connexion -->
+        <button
+          type="submit"
+          [disabled]="loginForm.invalid || loading"
+          class="w-full btn btn-primary py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (loading) {
+            <span class="flex items-center justify-center">
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Connexion en cours...
+            </span>
+          } @else {
+            Se connecter
+          }
+        </button>
+      </form>
+
+      <!-- Lien vers inscription -->
+      <div class="mt-6 text-center">
+        <p class="text-gray-600">
+          Pas encore de compte ?
+          <a routerLink="/register" class="text-primary-600 hover:text-primary-700 font-medium">
+            S'inscrire
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-white mt-8 text-sm">
+      © 2025 Clinique Médicale - Tous droits réservés
+    </p>
+  </div>
+</div>

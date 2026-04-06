@@ -42,3 +42,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Environment files (si vous avez des secrets)
+# Décommentez si vous ajoutez des secrets dans environment.prod.ts
+# /src/environments/environment.prod.ts

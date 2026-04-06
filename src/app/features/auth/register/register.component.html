@@ -1,0 +1,122 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary-500 to-secondary-700 px-4 py-12">
+  <div class="max-w-md w-full">
+    <div class="bg-white rounded-2xl shadow-2xl p-8">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-secondary-100 rounded-full mb-4">
+          <svg class="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900">Inscription</h2>
+        <p class="text-gray-600 mt-2">Créer un nouveau compte</p>
+      </div>
+
+      @if (errorMessage) {
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+            <span>{{ errorMessage }}</span>
+          </div>
+        </div>
+      }
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="mb-4">
+          <label for="username" class="label">Nom d'utilisateur</label>
+          <input
+            type="text"
+            id="username"
+            formControlName="username"
+            class="input"
+            [class.input-error]="hasError('username', 'required') || hasError('username', 'minlength')"
+            placeholder="Choisissez un nom d'utilisateur"
+          />
+          @if (hasError('username', 'required')) {
+            <p class="error-message">Le nom d'utilisateur est requis</p>
+          }
+          @if (hasError('username', 'minlength')) {
+            <p class="error-message">Minimum 3 caractères</p>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label for="email" class="label">Email</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="input"
+            [class.input-error]="hasError('email', 'required') || hasError('email', 'email')"
+            placeholder="votre@email.com"
+          />
+          @if (hasError('email', 'required')) {
+            <p class="error-message">L'email est requis</p>
+          }
+          @if (hasError('email', 'email')) {
+            <p class="error-message">Email invalide</p>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label for="password" class="label">Mot de passe</label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="input"
+            [class.input-error]="hasError('password', 'required') || hasError('password', 'minlength')"
+            placeholder="Minimum 6 caractères"
+          />
+          @if (hasError('password', 'required')) {
+            <p class="error-message">Le mot de passe est requis</p>
+          }
+          @if (hasError('password', 'minlength')) {
+            <p class="error-message">Minimum 6 caractères</p>
+          }
+        </div>
+
+        <div class="mb-6">
+          <label for="role" class="label">Rôle</label>
+          <select id="role" formControlName="role" class="input">
+            <option value="USER">Utilisateur</option>
+            <option value="MEDECIN">Médecin</option>
+            <option value="ADMIN">Administrateur</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="registerForm.invalid || loading"
+          class="w-full btn btn-success py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (loading) {
+            <span class="flex items-center justify-center">
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Inscription en cours...
+            </span>
+          } @else {
+            S'inscrire
+          }
+        </button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <p class="text-gray-600">
+          Déjà un compte ?
+          <a routerLink="/login" class="text-secondary-600 hover:text-secondary-700 font-medium">
+            Se connecter
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <p class="text-center text-white mt-8 text-sm">
+      © 2025 Clinique Médicale - Tous droits réservés
+    </p>
+  </div>
+</div>

@@ -1,59 +1,154 @@
-# CliniqueFrontend
+# Frontend - Système de Gestion de Clinique Médicale
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.3.
+Application Angular 18 avec Tailwind CSS
 
-## Development server
-
-To start a local development server, run:
+## Installation
 
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Démarrage
 
 ```bash
-ng generate component component-name
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+L'application sera accessible sur **http://localhost:4200**
+
+## Structure du projet
+
+```
+src/app/
+├── core/                    # Services, guards, interceptors, models
+│   ├── guards/
+│   │   └── auth.guard.ts
+│   ├── interceptors/
+│   │   └── jwt.interceptor.ts
+│   ├── models/
+│   │   ├── user.model.ts
+│   │   ├── patient.model.ts
+│   │   ├── medecin.model.ts
+│   │   ├── rendez-vous.model.ts
+│   │   └── dashboard.model.ts
+│   └── services/
+│       ├── auth.service.ts
+│       ├── patient.service.ts
+│       ├── medecin.service.ts
+│       ├── rendez-vous.service.ts
+│       └── dashboard.service.ts
+├── features/                # Composants par fonctionnalité
+│   ├── auth/
+│   │   ├── login/
+│   │   └── register/
+│   ├── dashboard/
+│   ├── patients/
+│   │   ├── patient-list/
+│   │   └── patient-form/
+│   ├── medecins/
+│   │   └── medecin-list/
+│   └── rendez-vous/
+│       └── rendez-vous-list/
+├── shared/                  # Composants partagés
+│   └── components/
+│       └── layout/
+├── app.config.ts           # Configuration de l'application
+├── app.routes.ts           # Configuration des routes
+└── app.ts                  # Composant racine
+```
+
+## Fonctionnalités
+
+### Authentification
+- ✅ Connexion avec JWT
+- ✅ Inscription
+- ✅ Protection des routes (AuthGuard)
+- ✅ Intercepteur JWT automatique
+
+### Dashboard
+- ✅ Statistiques en temps réel
+- ✅ Graphiques (rendez-vous par statut)
+- ✅ Actions rapides
+
+### Patients
+- ✅ Liste paginée
+- ✅ Recherche avec debounce
+- ✅ Création / Modification / Suppression
+- ✅ Formulaire modal avec validation
+
+### Médecins
+- ✅ Liste avec cartes
+- ✅ Recherche par spécialité
+- ✅ Affichage disponibilité
+
+### Rendez-vous
+- ✅ Liste avec détails patient/médecin
+- ✅ Filtrage par statut
+- ✅ Affichage coloré par statut
+
+## Technologies
+
+- **Angular 18** : Framework frontend
+- **Tailwind CSS** : Styling utility-first
+- **RxJS** : Programmation réactive
+- **TypeScript** : Typage statique
+- **Standalone Components** : Architecture moderne Angular
+
+## Configuration
+
+### API Backend
+
+L'URL de l'API est configurée dans chaque service :
+```typescript
+private readonly API_URL = 'http://localhost:3000/api/...';
+```
+
+Pour changer l'URL, modifiez-la dans :
+- `auth.service.ts`
+- `patient.service.ts`
+- `medecin.service.ts`
+- `rendez-vous.service.ts`
+- `dashboard.service.ts`
+
+### Tailwind CSS
+
+Configuration dans `tailwind.config.js` :
+- Couleurs personnalisées (primary, secondary)
+- Classes utilitaires globales dans `styles.css`
+
+## Commandes utiles
 
 ```bash
-ng generate --help
+# Démarrer en mode développement
+npm start
+
+# Build pour production
+npm run build
+
+# Lancer les tests
+npm test
+
+# Vérifier le code
+ng lint
 ```
 
-## Building
+## Connexion par défaut
 
-To build the project run:
+Après avoir créé un compte via `/register`, utilisez vos identifiants pour vous connecter.
 
-```bash
-ng build
-```
+## Notes importantes
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- Le token JWT est stocké dans `localStorage`
+- L'intercepteur ajoute automatiquement le token à toutes les requêtes
+- Le guard `authGuard` protège les routes privées
+- La recherche utilise `debounceTime(300ms)` pour optimiser les performances
 
-## Running unit tests
+## Prochaines améliorations possibles
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [ ] Formulaires pour médecins et rendez-vous
+- [ ] Graphiques Chart.js dans le dashboard
+- [ ] Notifications toast
+- [ ] Export PDF/Excel
+- [ ] Filtres avancés
+- [ ] Mode sombre
+- [ ] Internationalisation (i18n)

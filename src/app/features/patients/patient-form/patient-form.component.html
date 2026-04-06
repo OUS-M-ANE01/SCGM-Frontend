@@ -1,0 +1,218 @@
+<!-- Modal Overlay -->
+<div class="fixed inset-0 z-50 overflow-y-auto" (click)="onClose()">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <!-- Background overlay -->
+    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+
+    <!-- Modal panel -->
+    <div 
+      (click)="$event.stopPropagation()"
+      class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full"
+    >
+      <!-- Header -->
+      <div class="bg-primary-600 px-6 py-4 flex items-center justify-between">
+        <h3 class="text-xl font-semibold text-white">
+          {{ mode === 'create' ? 'Nouveau Patient' : 'Modifier Patient' }}
+        </h3>
+        <button (click)="onClose()" class="text-white hover:text-gray-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Error message -->
+      @if (error) {
+        <div class="mx-6 mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          {{ error }}
+        </div>
+      }
+
+      <!-- Form -->
+      <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="px-6 py-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Nom -->
+          <div>
+            <label for="nom" class="label">Nom *</label>
+            <input
+              type="text"
+              id="nom"
+              formControlName="nom"
+              class="input"
+              [class.input-error]="hasError('nom', 'required') || hasError('nom', 'minlength')"
+            />
+            @if (hasError('nom', 'required')) {
+              <p class="error-message">Le nom est requis</p>
+            }
+            @if (hasError('nom', 'minlength')) {
+              <p class="error-message">Minimum 2 caractères</p>
+            }
+          </div>
+
+          <!-- Prénom -->
+          <div>
+            <label for="prenom" class="label">Prénom *</label>
+            <input
+              type="text"
+              id="prenom"
+              formControlName="prenom"
+              class="input"
+              [class.input-error]="hasError('prenom', 'required') || hasError('prenom', 'minlength')"
+            />
+            @if (hasError('prenom', 'required')) {
+              <p class="error-message">Le prénom est requis</p>
+            }
+            @if (hasError('prenom', 'minlength')) {
+              <p class="error-message">Minimum 2 caractères</p>
+            }
+          </div>
+
+          <!-- Date de naissance -->
+          <div>
+            <label for="dateNaissance" class="label">Date de naissance *</label>
+            <input
+              type="date"
+              id="dateNaissance"
+              formControlName="dateNaissance"
+              class="input"
+              [class.input-error]="hasError('dateNaissance', 'required')"
+            />
+            @if (hasError('dateNaissance', 'required')) {
+              <p class="error-message">La date de naissance est requise</p>
+            }
+          </div>
+
+          <!-- CIN -->
+          <div>
+            <label for="cin" class="label">CIN *</label>
+            <input
+              type="text"
+              id="cin"
+              formControlName="cin"
+              class="input"
+              [class.input-error]="hasError('cin', 'required') || hasError('cin', 'minlength')"
+            />
+            @if (hasError('cin', 'required')) {
+              <p class="error-message">Le CIN est requis</p>
+            }
+            @if (hasError('cin', 'minlength')) {
+              <p class="error-message">Minimum 5 caractères</p>
+            }
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label for="email" class="label">Email *</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="input"
+              [class.input-error]="hasError('email', 'required') || hasError('email', 'email')"
+            />
+            @if (hasError('email', 'required')) {
+              <p class="error-message">L'email est requis</p>
+            }
+            @if (hasError('email', 'email')) {
+              <p class="error-message">Email invalide</p>
+            }
+          </div>
+
+          <!-- Téléphone -->
+          <div>
+            <label for="telephone" class="label">Téléphone *</label>
+            <input
+              type="tel"
+              id="telephone"
+              formControlName="telephone"
+              class="input"
+              [class.input-error]="hasError('telephone', 'required') || hasError('telephone', 'minlength')"
+            />
+            @if (hasError('telephone', 'required')) {
+              <p class="error-message">Le téléphone est requis</p>
+            }
+            @if (hasError('telephone', 'minlength')) {
+              <p class="error-message">Minimum 10 caractères</p>
+            }
+          </div>
+
+          <!-- Sexe -->
+          <div>
+            <label for="sexe" class="label">Sexe *</label>
+            <select id="sexe" formControlName="sexe" class="input">
+              <option value="M">Masculin</option>
+              <option value="F">Féminin</option>
+            </select>
+          </div>
+
+          <!-- Groupe sanguin -->
+          <div>
+            <label for="groupeSanguin" class="label">Groupe Sanguin</label>
+            <select id="groupeSanguin" formControlName="groupeSanguin" class="input">
+              <option value="">-- Sélectionner --</option>
+              @for (groupe of groupesSanguins; track groupe) {
+                <option [value]="groupe">{{ groupe }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Médecin traitant (admin uniquement) -->
+          @if (isAdmin) {
+            <div>
+              <label for="medecinTraitant" class="label">Médecin Traitant</label>
+              <select id="medecinTraitant" formControlName="medecinTraitant" class="input" [disabled]="loadingMedecins">
+                <option value="">-- Aucun --</option>
+                @if (loadingMedecins) {
+                  <option disabled>Chargement...</option>
+                }
+                @for (medecin of medecins; track medecin._id) {
+                  <option [value]="medecin._id">Dr. {{ medecin.prenom }} {{ medecin.nom }} - {{ medecin.specialite }}</option>
+                }
+              </select>
+            </div>
+          }
+
+          <!-- Antécédents (full width) -->
+          <div class="md:col-span-2">
+            <label for="antecedents" class="label">Antécédents médicaux</label>
+            <textarea
+              id="antecedents"
+              formControlName="antecedents"
+              rows="3"
+              class="input"
+              placeholder="Allergies, maladies chroniques, opérations..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-6 flex items-center justify-end space-x-3">
+          <button
+            type="button"
+            (click)="onClose()"
+            class="btn btn-secondary"
+          >
+            Annuler
+          </button>
+          <button
+            type="submit"
+            [disabled]="patientForm.invalid || loading"
+            class="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            @if (loading) {
+              <span class="flex items-center">
+                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Enregistrement...
+              </span>
+            } @else {
+              {{ mode === 'create' ? 'Créer' : 'Modifier' }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
